@@ -1,0 +1,6 @@
+code/accesslist.txt
+code/Properties
+code/obj
+.intermediate
+tools_*
+codegen-*

@@ -1,0 +1,22 @@
+{
+	"name": "Drone Combat",
+	"version": "1.0",
+	"sharedassets": "*.*",
+
+	"depends": [
+		"base",
+		"citizen",
+		"rust"
+	],
+
+	//
+	// Addons can contain multiple addons, describe them here
+	//
+	"gamemodes": [
+		{
+			"name": "dronecombat",
+			"title": "Drone Combat",
+			"description": "Fly fast and shoot faster"
+		}
+	]
+}
