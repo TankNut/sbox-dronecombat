@@ -11,12 +11,12 @@ namespace DroneCombat.Modules.Weapons
 
 		public virtual Crosshairs.Crosshair CreateCrosshair()
 		{
-			return Hud.Current.RootPanel.AddChild<Crosshairs.Crosshair>();
+			return Local.Hud.AddChild<Crosshairs.Crosshair>();
 		}
 
 		public void UpdateCrosshair()
 		{
-			if ( Crosshair == null )
+			if ( IsLocalPawn && Crosshair == null )
 				Crosshair = CreateCrosshair();
 		}
 

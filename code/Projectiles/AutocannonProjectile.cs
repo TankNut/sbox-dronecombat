@@ -9,7 +9,7 @@
 		{
 			base.Spawn();
 
-			WorldScale = 0.1f;
+			Scale = 0.1f;
 
 			SetModel( "models/citizen_props/hotdog01.vmdl" );
 		}

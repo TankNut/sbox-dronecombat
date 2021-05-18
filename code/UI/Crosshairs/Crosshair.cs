@@ -13,12 +13,12 @@ namespace DroneCombat.UI.Crosshairs
 
 		public override void Tick()
 		{
-			DronePlayer player = Player.Local as DronePlayer;
+			DronePawn player = Local.Pawn as DronePawn;
 
 			if ( player.ActiveChild is not WeaponModule module )
 				return;
 
-			TraceResult trace = (module.Owner as DronePlayer).GetTrace()
+			TraceResult trace = (module.Owner as DronePawn).GetTrace()
 				.Size( module.TraceSize )
 				.Run();
 
@@ -29,7 +29,7 @@ namespace DroneCombat.UI.Crosshairs
 			transform.AddTranslateX( Length.Fraction( -0.5f ) );
 			transform.AddTranslateY( Length.Fraction( -0.5f ) );
 
-			float roll = player.WorldRot.Angles().roll - Camera.LastRot.Angles().roll;
+			float roll = player.Rotation.Angles().roll - CurrentView.Rotation.Angles().roll;
 
 			transform.AddRotation( 0, 0, roll );
 

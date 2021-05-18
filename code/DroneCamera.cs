@@ -2,7 +2,7 @@
 
 namespace DroneCombat
 {
-	class DroneCamera : BaseCamera
+	class DroneCamera : Camera
 	{
 		public static float Distance => 40.0f;
 		public static float LagDistance => 20.0f;
@@ -10,19 +10,19 @@ namespace DroneCombat
 
 		public override void Update()
 		{
-			var player = Player.Local;
-			var controller = player.GetActiveController() as DroneController;
+			var pawn = Local.Pawn as DronePawn;
+			var controller = pawn.GetActiveController() as DroneController;
 
-			Pos = player.WorldPos + Vector3.Up * player.CollisionBounds.Maxs.z;
-			Pos -= player.Velocity / controller.BaseSpeed * LagDistance;
+			Pos = pawn.Position + Vector3.Up * pawn.CollisionBounds.Maxs.z * pawn.Scale;
+			Pos -= pawn.Velocity / controller.BaseSpeed * LagDistance;
 
-			Rot = player.EyeRot;
-			Rot *= Rotation.FromRoll( player.WorldRot.Angles().roll * RollMultiplier );
+			Rot = pawn.EyeRot;
+			Rot *= Rotation.FromRoll( pawn.Rotation.Angles().roll * RollMultiplier );
 
-			Vector3 targetPos = Pos + player.EyeRot.Forward * -Distance;
+			Vector3 targetPos = Pos + pawn.EyeRot.Forward * -Distance;
 
 			var tr = Trace.Ray( Pos, targetPos )
-				.Ignore( player )
+				.Ignore( pawn )
 				.Radius( 8 )
 				.Run();
 

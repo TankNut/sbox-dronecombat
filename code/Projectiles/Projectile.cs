@@ -14,9 +14,9 @@ namespace DroneCombat.Projectiles
 			if ( IsClient )
 				return;
 
-			Vector3 velocity = WorldRot.Forward * Speed * delta;
+			Vector3 velocity = Rotation.Forward * Speed * delta;
 
-			TraceResult trace = Trace.Ray( WorldPos, WorldPos + velocity )
+			TraceResult trace = Trace.Ray( Position, Position + velocity )
 				.WorldAndEntities()
 				.HitLayer( CollisionLayer.SKY, true )
 				.Ignore( Owner )
@@ -26,7 +26,7 @@ namespace DroneCombat.Projectiles
 
 			Process( trace );
 
-			WorldPos = trace.EndPos;
+			Position = trace.EndPos;
 
 			if ( trace.Hit && !HasHit )
 				Hit( trace );

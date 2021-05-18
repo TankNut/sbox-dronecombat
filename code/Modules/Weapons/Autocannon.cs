@@ -1,7 +1,5 @@
 ﻿using DroneCombat.Projectiles;
 using Sandbox;
-using System.Collections.Generic;
-using Crosshairs = DroneCombat.UI.Crosshairs;
 
 namespace DroneCombat.Modules.Weapons
 {
@@ -42,8 +40,8 @@ namespace DroneCombat.Modules.Weapons
 				{
 					AutocannonProjectile bullet = new();
 
-					bullet.WorldPos = GetOrigin( Side );
-					bullet.WorldRot = Owner.EyeRot;
+					bullet.Position = GetOrigin( Side );
+					bullet.Rotation = Owner.EyeRot;
 					bullet.Owner = Owner;
 				}
 			}
@@ -54,10 +52,8 @@ namespace DroneCombat.Modules.Weapons
 		[ClientRpc]
 		public void ShootEffects()
 		{
-			if ( HasLocalPlayerOwner )
-			{
+			if ( Local.Pawn == Owner )
 				_ = new Sandbox.ScreenShake.Perlin( 0.5f, 2.0f, 0.2f );
-			}
 		}
 
 		public Vector3 GetOrigin( bool side = false )

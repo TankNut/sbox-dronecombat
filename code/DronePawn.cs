@@ -1,18 +1,24 @@
-﻿using DroneCombat.UI;
-using Sandbox;
+﻿using Sandbox;
 
 namespace DroneCombat
 {
-	partial class DronePlayer : BasePlayer
+	partial class DronePawn : Player
 	{
 		public new DroneInventory Inventory { get; protected set; }
 
 		[Net]
-		public DronePlayer Target { get; set; }
+		public DronePawn Target { get; set; }
 
-		public DronePlayer()
+		public DronePawn()
 		{
 			Inventory = new( this );
+		}
+
+		public override void Spawn()
+		{
+			Scale = 0.2f;
+
+			SetModel( "entities/drone/drone.vmdl" );
 		}
 
 		public override void Respawn()
@@ -22,23 +28,19 @@ namespace DroneCombat
 
 			Velocity = Vector3.Zero;
 
-			Inventory.Add( new Modules.Weapons.Autocannon(), true );
-
-			WorldScale = 0.2f;
-
-			SetModel( "entities/drone/drone.vmdl" );
-
 			Controller = new DroneController();
 			Camera = new DroneCamera();
 
-			UpdatePhysicsHull();
+			CreateHull();
+
+			Game.Current?.MoveToSpawnpoint( this );
+
 			ResetInterpolation();
 
-			EnableHitboxes = true;
 			EnableAllCollisions = true;
 			EnableDrawing = true;
 
-			GameBase.Current?.PlayerRespawn( this );
+			Inventory.Add( new Modules.Weapons.Autocannon(), true );
 		}
 
 		public override void OnKilled()
@@ -48,18 +50,17 @@ namespace DroneCombat
 			Controller = null;
 			Camera = new SpectateRagdollCamera();
 
-			EnableHitboxes = false;
-			EnableAllCollisions = false;
-			EnableDrawing = false;
+			EnableAllCollisions = true;
+			EnableDrawing = true;
 
 			Inventory.Clear();
 
 			Target = null;
 		}
 
-		protected override void Tick()
+		public override void Simulate( Client client )
 		{
-			base.Tick();
+			base.Simulate( client );
 
 			UpdateTarget();
 
@@ -77,7 +78,7 @@ namespace DroneCombat
 					.Size( 10.0f )
 					.Run();
 
-				Target = trace.Hit ? trace.Entity as DronePlayer : null;
+				Target = trace.Hit ? trace.Entity as DronePawn : null;
 			}
 
 			if ( Target != null && Target.LifeState != LifeState.Alive )
@@ -101,7 +102,7 @@ namespace DroneCombat
 		}
 		public Trace GetTrace() => GetTrace( EyePos );
 
-		protected override void TickActiveChild()
+		protected void TickActiveChild()
 		{
 			if ( ActiveChild is Modules.ActiveModule module )
 				module.ActiveTick();
@@ -125,8 +126,10 @@ namespace DroneCombat
 
 			for ( int i = 0; i < turbinePositions.Length; ++i )
 			{
-				var transform = Transform.ToWorld( new Transform( turbinePositions[i] * WorldScale, Rotation.From( new Angles( 0, spinAngle, 0 ) ) ) );
-				transform.Scale = WorldScale;
+				var transform = Transform.ToWorld( new Transform( turbinePositions[i] * Scale, Rotation.From( new Angles( 0, spinAngle, 0 ) ) ) );
+
+				transform.Scale = Scale;
+
 				SetBoneTransform( i, transform );
 			}
 		}

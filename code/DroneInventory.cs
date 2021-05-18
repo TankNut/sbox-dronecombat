@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-
-using Sandbox;
-
 using DroneCombat.Modules;
 
 namespace DroneCombat
@@ -11,11 +8,11 @@ namespace DroneCombat
 		public readonly List<Module> Modules = new();
 		public readonly List<ActiveModule> ActiveModules = new();
 
-		public DronePlayer Owner { get; set; }
+		public DronePawn Owner { get; set; }
 
 		public ActiveModule ActiveModule { get; private set; }
 
-		public DroneInventory( DronePlayer player )
+		public DroneInventory( DronePawn player )
 		{
 			Owner = player;
 		}

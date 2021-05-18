@@ -15,7 +15,7 @@ namespace DroneCombat.UI
 
 		public override void Tick()
 		{
-			DronePlayer target = (Player.Local as DronePlayer).Target;
+			DronePawn target = (Local.Pawn as DronePawn).Target;
 
 			bool active = target != null;
 
@@ -23,9 +23,9 @@ namespace DroneCombat.UI
 
 			if ( active )
 			{
-				PositionAtWorld( target.WorldPos );
+				PositionAtWorld( target.Position );
 
-				BBox box = target.GetActiveController().GetHull();
+				BBox box = (target.GetActiveController() as DroneController).GetHull();
 
 				List<Vector2> points = new()
 				{

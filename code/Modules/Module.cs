@@ -9,8 +9,8 @@ namespace DroneCombat.Modules
 			SetParent( inventory.Owner, true );
 
 			Owner = inventory.Owner;
-			LocalPos = Vector3.Zero;
-			LocalRot = Rotation.Identity;
+			LocalPosition = Vector3.Zero;
+			LocalRotation = Rotation.Identity;
 
 			Activate();
 		}

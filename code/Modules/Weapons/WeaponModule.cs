@@ -11,7 +11,7 @@ namespace DroneCombat.Modules.Weapons
 
 		public virtual float TraceSize => 3.0f;
 
-		public virtual Vector3 GetOrigin() => Owner.WorldPos;
+		public virtual Vector3 GetOrigin() => Owner.Position;
 
 		public override void ActiveTick()
 		{
@@ -20,18 +20,18 @@ namespace DroneCombat.Modules.Weapons
 			if ( wantToAttack && CanAttack() )
 				Attack();
 
-			if ( HasLocalPlayerOwner && UseCrosshair )
+			if ( IsLocalPawn && UseCrosshair )
 				UpdateCrosshair();
 		}
 
-		public override void SetInactive() => DestroyCrosshair( Owner );
-		protected override void Deactivate() => DestroyCrosshair( Owner );
+		public override void SetInactive() => DestroyCrosshair( To.Single( Owner ) );
+		protected override void Deactivate() => DestroyCrosshair( To.Single( Owner ) );
 
 		public TraceResult DoTrace( Vector3 start )
 		{
 			bool InWater = Physics.TestPointContents( start, CollisionLayer.Water );
 
-			return (Owner as DronePlayer).GetTrace( start )
+			return (Owner as DronePawn).GetTrace( start )
 				.HitLayer( CollisionLayer.Water, !InWater )
 				.Size( TraceSize )
 				.Run();

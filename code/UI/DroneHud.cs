@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DroneCombat.UI
 {
-	class DroneHud : Hud
+	class DroneHud : HudEntity<RootPanel>
 	{
 		public DroneHud()
 		{

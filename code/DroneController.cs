@@ -16,8 +16,11 @@ namespace DroneCombat
 
 		public Vector3 OldVelocity { get; set; } = Vector3.Zero;
 
-		public override void Tick()
+		public override void Simulate()
 		{
+			EyePosLocal = Vector3.Zero;
+			EyeRot = Input.Rotation;
+
 			OldVelocity = Velocity;
 
 			BuildWishVelocity();
@@ -28,13 +31,13 @@ namespace DroneCombat
 
 			BBox hull = GetHull();
 
-			MoveHelper mover = new( Pos, Velocity );
+			MoveHelper mover = new( Position, Velocity );
 
-			mover.Trace = mover.Trace.Size( hull.Mins, hull.Maxs ).HitLayer( CollisionLayer.SKY ).Ignore( Player );
+			mover.Trace = mover.Trace.Size( hull.Mins, hull.Maxs ).HitLayer( CollisionLayer.SKY ).Ignore( Pawn );
 			mover.MaxStandableAngle = 0f;
 			mover.TryMove( Time.Delta );
 
-			Pos = mover.Position;
+			Position = mover.Position;
 			Velocity = mover.Velocity;
 
 			SetRotation();
@@ -56,7 +59,7 @@ namespace DroneCombat
 			up -= Input.Down( InputButton.Run ) ? 1 : 0;
 
 			WishVelocity = new Vector3( Input.Forward, Input.Left * StrafeMultiplier, up * HeightMultiplier );
-			WishVelocity *= Rotation.LookAt( Rot.Forward.WithZ( 0 ), Vector3.Up );
+			WishVelocity *= Rotation.LookAt( Rotation.Forward.WithZ( 0 ), Vector3.Up );
 
 			var speed = WishVelocity.Length.Clamp( 0, 1 );
 
@@ -104,35 +107,35 @@ namespace DroneCombat
 
 		void SetRotation()
 		{
-			var targetRotation = Rotation.LookAt( Input.Rot.Forward.WithZ( 0 ), Vector3.Up );
+			var targetRotation = Rotation.LookAt( Input.Rotation.Forward.WithZ( 0 ), Vector3.Up );
 
 			Vector3 diff = Velocity - OldVelocity;
 
 			var scalar = (BaseAccel * Time.Delta * BaseSpeed);
 
-			var pitch = diff.Dot( Rot.Forward.WithZ( 0 ) ) / scalar;
-			var roll = diff.Dot( Rot.Right.WithZ( 0 ) ) / scalar;
+			var pitch = diff.Dot( Rotation.Forward.WithZ( 0 ) ) / scalar;
+			var roll = diff.Dot( Rotation.Right.WithZ( 0 ) ) / scalar;
 
 			targetRotation *= Rotation.FromPitch( pitch * MaxTilt );
 			targetRotation *= Rotation.FromRoll( roll * MaxTilt );
 
-			Rot = Rotation.Slerp( Rot, targetRotation, TurnSpeed * Time.Delta );
+			Rotation = Rotation.Slerp( Rotation, targetRotation, TurnSpeed * Time.Delta );
 		}
 
 		void WriteDebugInfo()
 		{
 			BBox hull = GetHull();
 
-			DebugOverlay.Box( Pos + TraceOffset, hull.Mins, hull.Maxs, Color.Red );
-			DebugOverlay.Box( Pos, hull.Mins, hull.Maxs, Color.Blue );
+			DebugOverlay.Box( Position + TraceOffset, hull.Mins, hull.Maxs, Color.Red );
+			DebugOverlay.Box( Position, hull.Mins, hull.Maxs, Color.Blue );
 
 			var lineOffset = Host.IsServer ? 10 : 0;
 
-			DebugOverlay.ScreenText( lineOffset + 0, $"             Pos: {Pos}" );
+			DebugOverlay.ScreenText( lineOffset + 0, $"             Pos: {Position}" );
 			DebugOverlay.ScreenText( lineOffset + 1, $"             Vel: {Velocity} ({Velocity.Length:n0})" );
 			DebugOverlay.ScreenText( lineOffset + 2, $"    WishVelocity: {WishVelocity}" );
 			DebugOverlay.ScreenText( lineOffset + 3, $"    BaseVelocity: {BaseVelocity}" );
-			DebugOverlay.ScreenText( lineOffset + 4, $"        Rotation: {Rot.Angles().pitch:n2},{Rot.Angles().yaw:n2},{Rot.Angles().roll:n2}" );
+			DebugOverlay.ScreenText( lineOffset + 4, $"        Rotation: {Rotation.Angles().pitch:n2},{Rotation.Angles().yaw:n2},{Rotation.Angles().roll:n2}" );
 		}
 	}
 }

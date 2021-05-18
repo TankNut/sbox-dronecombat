@@ -13,14 +13,14 @@ namespace DroneCombat.UI
 
 		public float TimeToTarget( Vector3 pos )
 		{
-			Vector3 distance = pos - Player.Local.WorldPos;
+			Vector3 distance = pos - Local.Pawn.Position;
 
 			return distance.Length / 4000.0f;
 		}
 
 		public override void Tick()
 		{
-			DronePlayer target = (Player.Local as DronePlayer).Target;
+			DronePawn target = (Local.Pawn as DronePawn).Target;
 
 			bool active = target != null;
 
@@ -28,10 +28,10 @@ namespace DroneCombat.UI
 
 			if ( active )
 			{
-				PositionAtWorld( target.WorldPos );
+				PositionAtWorld( target.Position );
 
-				Vector3 start = target.WorldPos;
-				Vector3 lead = target.WorldPos + (target.Velocity * TimeToTarget( target.WorldPos ));
+				Vector3 start = target.Position;
+				Vector3 lead = target.Position + (target.Velocity * TimeToTarget( target.Position ));
 
 				Vector2 screen = lead.ToScreen() - start.ToScreen();
 

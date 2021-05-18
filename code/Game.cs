@@ -5,7 +5,6 @@ namespace DroneCombat
 	[Library( "dronecombat", Title = "Drone Combat" )]
 	partial class Game : Sandbox.Game
 	{
-		public override Player CreatePlayer() => new DronePlayer();
 
 		public Game()
 		{
@@ -13,11 +12,20 @@ namespace DroneCombat
 				_ = new UI.DroneHud();
 		}
 
-		public override void PlayerRespawn( Player player )
+		public override void ClientJoined( Client cl )
 		{
-			base.PlayerRespawn( player );
+			DronePawn pawn = new();
 
-			player.WorldPos += Vector3.Up * 20;
+			pawn.Respawn();
+
+			cl.Pawn = pawn;
+		}
+
+		public override void MoveToSpawnpoint( Entity pawn )
+		{
+			base.MoveToSpawnpoint( pawn );
+
+			pawn.Position += Vector3.Up * 20;
 		}
 	}
 }
